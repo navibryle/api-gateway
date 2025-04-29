@@ -2,6 +2,7 @@ package com.api.gateway.security;
 
 import javax.crypto.SecretKey;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
 public class SecurityUtil {
@@ -11,6 +12,12 @@ public class SecurityUtil {
  }
 
  public static boolean isJwsValid(String jws,String username){
-  return Jwts.parser().verifyWith(key).build().parseSignedClaims(jws).getPayload().getSubject().equals(username);
+  try {
+    Jwts.parser().verifyWith(key).build().parseSignedClaims(jws);
+    return true;
+  } catch (JwtException e) {
+    return false;
+  }
  }
+
 }
