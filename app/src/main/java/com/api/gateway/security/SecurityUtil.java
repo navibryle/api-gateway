@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 
 public class SecurityUtil {
   private static SecretKey key = Jwts.SIG.HS256.key().build();
+
   public static String getJws(String userName){
     return Jwts.builder().subject(userName).signWith(key).compact();
  }
