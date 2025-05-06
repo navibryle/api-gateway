@@ -16,9 +16,16 @@ public class ProtectedRequestMatcher implements RequestMatcher{
 
   @Override
   public boolean matches(HttpServletRequest request) {
-    configDef.getApis().stream().forEach((api) -> {
-      request.getRequestURI().matches(api.getSrcPath());
-    });
+    return configDef.getApis().stream().filter((api) -> {
+      System.out.println("DEBUGPRINT[55]: ProtectedRequestMatcher.java:19 (after return configDef.getApis().stream().filt…)");
+      System.out.println(request.getRequestURI());
+      System.out.println(request.getLocalName());
+      System.out.println(request.getPathInfo());
+      System.out.println(request.getLocalAddr());
+      System.out.println("DEBUGPRINT[56]: ProtectedRequestMatcher.java:20 (after System.err.println(DEBUGPRINT[55]: Prote…)");
+
+      return request.getRequestURI().toLowerCase().equals(api.getSrcPath());
+    }).toList().size() > 0;
   }
 
 }
