@@ -1,13 +1,18 @@
 package com.api.gateway.controllers;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@Controller
+@RestControllerAdvice
 public class Error {
 
-  @GetMapping("/error")
-  public String err(){
-    return "ERROR";
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler(Exception.class)
+  public String handle404(){
+    // This is returned when there is an error
+    // TODO: replace this
+    return "Error";
   }
 }

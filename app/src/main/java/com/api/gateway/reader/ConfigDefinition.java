@@ -28,5 +28,7 @@ public class ConfigDefinition {
     apis = new ArrayList<>();
     // src,target
     apis.add(new ApiModel("/login","http://localhost:8080/login",false));
+    apis.add(new ApiModel("/test","http://localhost:8080/test",false));
+    apis.add(new ApiModel("/error","http://localhost:8080/error",false));
   }
 }

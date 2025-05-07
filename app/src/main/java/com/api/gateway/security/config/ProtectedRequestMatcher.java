@@ -5,26 +5,32 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 
 import com.api.gateway.reader.ConfigDefinition;
+import com.api.gateway.security.JwsUtil;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class ProtectedRequestMatcher implements RequestMatcher{
 
   @Autowired
-  ConfigDefinition configDef;
+  private ConfigDefinition configDef;
+
+  @Autowired
+  private JwsUtil jwsUtil;
 
   @Override
   public boolean matches(HttpServletRequest request) {
     return configDef.getApis().stream().filter((api) -> {
-      System.out.println("DEBUGPRINT[55]: ProtectedRequestMatcher.java:19 (after return configDef.getApis().stream().filt…)");
-      System.out.println(request.getRequestURI());
-      System.out.println(request.getLocalName());
-      System.out.println(request.getPathInfo());
-      System.out.println(request.getLocalAddr());
-      System.out.println("DEBUGPRINT[56]: ProtectedRequestMatcher.java:20 (after System.err.println(DEBUGPRINT[55]: Prote…)");
-
-      return request.getRequestURI().toLowerCase().equals(api.getSrcPath());
+      boolean pathMatch = request.getRequestURI().toLowerCase().equals(api.getSrcPath());
+      if (pathMatch && api.isProtected()){
+        String bearerToken = request.getHeader("Authorization");
+        if (!StringUtils.isEmpty(bearerToken)){
+          return jwsUtil.isJwsValid(bearerToken);
+        }
+        return false;
+      }
+      return pathMatch;
     }).toList().size() > 0;
   }
 

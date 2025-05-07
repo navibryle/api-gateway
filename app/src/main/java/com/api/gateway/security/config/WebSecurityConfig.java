@@ -10,7 +10,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-
   @Autowired
   ProtectedRequestMatcher protectedRequestMatcher;
 
@@ -19,8 +18,7 @@ public class WebSecurityConfig {
     http
       .authorizeHttpRequests(
           (req) -> req.requestMatchers(protectedRequestMatcher).permitAll().anyRequest().authenticated()
-      ).formLogin((form) -> form.loginPage("/login").permitAll()).logout((logout) -> logout.permitAll());
+     ).formLogin((form) -> form.loginPage("/login").permitAll()).logout((logout) -> logout.permitAll());
     return http.build();
   }
-
 }
