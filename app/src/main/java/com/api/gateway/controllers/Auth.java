@@ -82,6 +82,11 @@ public class Auth {
       out.setBearerToken(jwsUtil.getJws(registrationForm.getUsername()));
       out.setStatus(AuthResponse.Status.OK);
     }else{
+      if (authResponse.hasBody()){
+        if (authResponse.getBody().toLowerCase().contains("user_exists")){
+          throw new AuthException("User already exists");
+        }
+      }
       out.setStatus(AuthResponse.Status.NOT_OK);
     }
     return out;
