@@ -21,7 +21,7 @@ public class ProtectedRequestMatcher implements RequestMatcher{
 
   @Override
   public boolean matches(HttpServletRequest request) {
-    return configDef.getApis().stream().filter((api) -> {
+    int count = configDef.getApis().stream().filter((api) -> {
       boolean pathMatch = request.getRequestURI().toLowerCase().equals(api.getSrcPath());
       if (pathMatch && api.isProtected()){
         String bearerToken = request.getHeader("Authorization");
@@ -31,7 +31,10 @@ public class ProtectedRequestMatcher implements RequestMatcher{
         return false;
       }
       return pathMatch;
-    }).toList().size() > 0;
+    }).toList().size();
+
+
+    return count == 1;
   }
 
 }
