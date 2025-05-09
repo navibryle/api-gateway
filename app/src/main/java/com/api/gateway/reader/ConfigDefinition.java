@@ -13,7 +13,7 @@ import jakarta.annotation.PostConstruct;
 @Component
 public class ConfigDefinition {
 
-  public List<ApiModel> apis;
+  private List<ApiModel> apis;
 
   public List<ApiModel> getApis() {
     return apis;

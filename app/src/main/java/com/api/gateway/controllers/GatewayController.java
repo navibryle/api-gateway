@@ -21,15 +21,17 @@ public class GatewayController {
   private static final String PREFIX_MATCHER = "/v1/app/**";
 
   @Autowired
-  ConfigDefinition configDef;
+  private ConfigDefinition configDef;
 
   @RequestMapping(value = {GatewayController.PREFIX_MATCHER}, method = {RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST,RequestMethod.OPTIONS,RequestMethod.DELETE})
   @ResponseBody
   public String gatewayMap(HttpServletRequest req){
     String srcUrl = new AntPathMatcher().extractPathWithinPattern(GatewayController.PREFIX_MATCHER,req.getRequestURI());
+
     List<ApiModel> matchingApis = configDef.getApis().stream().filter((api) -> 
-      api.getSrcPath().toLowerCase().equals(GatewayController.PREFIX + srcUrl)
+      api.getSrcPath().trim().toLowerCase().equals(GatewayController.PREFIX + srcUrl.trim())
     ).toList();
+
     if(matchingApis.size() > 1 || matchingApis.size() == 0){
       throw new RuntimeException("This should not be possible since there is a check for this in the filter chain");
     }
