@@ -14,6 +14,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.api.gateway.Util;
+import com.api.gateway.models.ApiModel;
 import com.api.gateway.models.AuthRequest;
 import com.api.gateway.models.AuthResponse;
 import com.api.gateway.models.RegisterRequest;
@@ -24,11 +25,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.security.auth.message.AuthException;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Controller("/auth")
+@Controller
 public class Auth {
 
   @Autowired
-  RestTemplate authRestTemplate;
+  private RestTemplate authRestTemplate;
 
   @Autowired
   private Util util;
@@ -39,20 +40,20 @@ public class Auth {
   @Autowired
   private ConfigDefinition configDef;
 
-  private String getLoginUrlForApi() throws AuthException{
-    List<String> authUrls = configDef.getApis().stream().map((api) -> api.getSrcPath()).filter((srcPath) -> srcPath.equals("/login")).toList();
+  private String getApiTarget(String apiPath) throws AuthException{
+    List<ApiModel> authUrls = configDef.getApis().stream().filter((api) -> api.getSrcPath().equals(apiPath)).toList();
     if (authUrls.size() != 1){
       throw new AuthException("Incorrect api gateway configuration");
     }
-    return authUrls.get(0);
+    return authUrls.get(0).getTarget();
+  }
+
+  private String getLoginUrlForApi() throws AuthException{
+    return getApiTarget(GatewayController.PREFIX + "login");
   }
 
   private String getRegistrationUrlForApi() throws AuthException{
-    List<String> authUrls = configDef.getApis().stream().map((api) -> api.getSrcPath()).filter((srcPath) -> srcPath.equals("/registration")).toList();
-    if (authUrls.size() != 1){
-      throw new AuthException("Incorrect api gateway configuration");
-    }
-    return authUrls.get(0);
+    return getApiTarget(GatewayController.PREFIX + "registration");
   }
 
   @PostMapping("/login")
