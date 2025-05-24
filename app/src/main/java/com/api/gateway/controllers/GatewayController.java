@@ -46,8 +46,8 @@ public class GatewayController {
 
     URI uri = new URI(matchingApis.get(0).getTarget());
     HttpURLConnection con = (HttpURLConnection) uri.toURL().openConnection();
+    con.setDoOutput(true);
     con.setRequestMethod(req.getMethod());
-    OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream(),"UTF-8");
     req.getHeaderNames().asIterator().forEachRemaining(
         (headerKey) ->{
           if (!headerKey.equals("Authorization")){
@@ -55,14 +55,21 @@ public class GatewayController {
           }
         } 
       );
+    OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream(),"UTF-8");
     req.getReader().transferTo(writer);
+    req.getReader().close();
+    writer.close();
     if (con.getResponseCode() == HttpURLConnection.HTTP_OK){
       con.getInputStream().transferTo(response.getOutputStream());
       con.getHeaderFields().forEach((key,value) -> {
-        response.addHeader(key, value.toString());
+        String out = "";
+        for (String item: value){
+          out = out + item;
+        }
+        response.addHeader(key, out);
       });;
     }else{
-      throw new GatewayException(GatewayException.MSG.REQ_FAILED);
+      throw new GatewayException(GatewayException.MSG.REQ_FAILED, Integer.toString(con.getResponseCode()));
     }
   }
 }
