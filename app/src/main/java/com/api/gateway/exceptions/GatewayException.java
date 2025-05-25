@@ -5,6 +5,7 @@ public class GatewayException extends Exception{
   public enum MSG{
     REQ_FAILED,
     MULTIPLE_REGISTER,
+    BAD_INCORMING_REQ,
   }
 
 
@@ -14,6 +15,8 @@ public class GatewayException extends Exception{
         return "The request to the target server has failed with status:";
       case MULTIPLE_REGISTER:
         return "Api gateway has more than one registration endpoint";
+      case BAD_INCORMING_REQ:
+        return "The incoming request is bad";
       default:
           return "Error";
     } 
