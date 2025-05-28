@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,7 +32,8 @@ public class GatewayController {
   @Autowired
   private ConfigDefinition configDef;
 
-  @RequestMapping(value = {GatewayController.PREFIX_MATCHER}, method = {RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST,RequestMethod.OPTIONS,RequestMethod.DELETE})
+  @CrossOrigin(origins = {"http://localhost","localhost","http://localhost:5173","localhost:5173"})
+  @RequestMapping(value = {GatewayController.PREFIX_MATCHER}, method = {RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST,RequestMethod.DELETE})
   @ResponseBody
   public void gatewayMap(HttpServletRequest req,HttpServletResponse response) throws GatewayException{
     String srcUrl = new AntPathMatcher().extractPathWithinPattern(GatewayController.PREFIX_MATCHER,req.getRequestURI());
