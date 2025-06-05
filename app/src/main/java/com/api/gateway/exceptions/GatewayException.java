@@ -12,7 +12,7 @@ public class GatewayException extends Exception{
   private static String getMsg(MSG msg){
     switch (msg) {
       case REQ_FAILED:
-        return "The request to the target server has failed with status:";
+        return "The request to the target server has failed with the following error:";
       case MULTIPLE_REGISTER:
         return "Api gateway has more than one registration endpoint";
       case BAD_INCORMING_REQ:

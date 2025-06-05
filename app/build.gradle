@@ -25,3 +25,7 @@ java {
 application {
   mainClass = 'com.api.gateway.App'
 }
+
+group = 'com.api.gateway'
+version = '1.0.0'
+sourceCompatibility = '21'
