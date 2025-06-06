@@ -26,6 +26,7 @@ import com.api.gateway.exceptions.GatewayException;
 import com.api.gateway.models.ApiModel;
 import com.api.gateway.reader.ConfigDefinition;
 
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -59,7 +60,10 @@ public class GatewayControllerTest {
     String reqMethod = "GET";
     OutputStream mockOutputStream = Mockito.mock(OutputStream.class);
     InputStream mockInputStream = Mockito.mock(InputStream.class);
+    ServletOutputStream mockServletOutputStream = Mockito.mock(ServletOutputStream.class);
     Map<String,List<String>> headerMap = new HashMap<>();
+
+    byte[] byteArr = {(byte)1};
 
     headerMap.put(header1key, Arrays.asList(header1Val));
     vector.add(header1key);
@@ -67,6 +71,7 @@ public class GatewayControllerTest {
     apiList.add(api1);
     apiList.add(api2);
     apiList.add(api3);
+    Mockito.when(response.getOutputStream()).thenReturn(mockServletOutputStream);
     Mockito.when(req.getRequestURI()).thenReturn(api1.getSrcPath());
     Mockito.when(req.getMethod()).thenReturn(reqMethod);
     Mockito.when(configDef.getApis()).thenReturn(apiList);
@@ -75,6 +80,7 @@ public class GatewayControllerTest {
     Mockito.when(req.getReader()).thenReturn(reader);
     Mockito.when(mockUri.toURL()).thenReturn(mockUrl);
     Mockito.when(mockUrl.openConnection()).thenReturn(mockHttpCon);
+    Mockito.when(mockInputStream.readAllBytes()).thenReturn(byteArr);
     Mockito.when(mockHttpCon.getOutputStream()).thenReturn(mockOutputStream);
     Mockito.when(mockHttpCon.getResponseCode()).thenReturn(HttpURLConnection.HTTP_OK);
     Mockito.when(mockHttpCon.getInputStream()).thenReturn(mockInputStream);
@@ -89,6 +95,7 @@ public class GatewayControllerTest {
     Mockito.verify(mockHttpCon).setRequestProperty(header1key, header1Val);
     Mockito.verify(mockHttpCon,Mockito.never()).setRequestProperty(header2key, header2Val);
     Mockito.verify(response).addHeader(header1key,header1Val);
+    Mockito.verify(response).setContentLengthLong(byteArr.length);
   }
 
 }
