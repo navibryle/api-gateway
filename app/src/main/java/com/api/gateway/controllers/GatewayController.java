@@ -55,7 +55,6 @@ public class GatewayController {
     } catch (IOException e) {
       throw new RuntimeException("Incorrect URI configured");
     }
-
     con.setDoOutput(true);
 
     try {
@@ -76,8 +75,13 @@ public class GatewayController {
       req.getReader().transferTo(writer);
       req.getReader().close();
       writer.close();
-      if (con.getResponseCode() == HttpURLConnection.HTTP_OK){
-        con.getInputStream().transferTo(response.getOutputStream());
+      int responseCode = con.getResponseCode();
+      if (responseCode >= 200 && responseCode < 300){
+        byte[] input = con.getInputStream().readAllBytes();
+        response.getOutputStream().write(input);
+        response.setContentType(con.getContentType());
+        response.setContentLengthLong(input.length);
+        response.setCharacterEncoding("UTF-8");
         con.getHeaderFields().forEach((key,value) -> {
           String out = "";
           for (String item: value){
@@ -89,7 +93,7 @@ public class GatewayController {
         throw new GatewayException(GatewayException.MSG.REQ_FAILED, Integer.toString(con.getResponseCode()));
       }
     } catch (IOException e) {
-        throw new GatewayException(GatewayException.MSG.REQ_FAILED);
+        throw new GatewayException(GatewayException.MSG.REQ_FAILED,e.getMessage());
     }
     
   }
