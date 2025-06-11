@@ -32,7 +32,7 @@ public class GatewayController {
   @Autowired
   private ConfigDefinition configDef;
 
-  @CrossOrigin(origins = {"http://localhost","localhost","http://localhost:5173","localhost:5173"})
+  @CrossOrigin(origins = {"*"})
   @RequestMapping(value = {GatewayController.PREFIX_MATCHER}, method = {RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST,RequestMethod.DELETE})
   @ResponseBody
   public void gatewayMap(HttpServletRequest req,HttpServletResponse response) throws GatewayException{
