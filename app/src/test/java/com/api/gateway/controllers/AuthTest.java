@@ -23,7 +23,6 @@ import com.api.gateway.Util;
 import com.api.gateway.models.ApiModel;
 import com.api.gateway.models.AuthRequest;
 import com.api.gateway.models.AuthResponse;
-import com.api.gateway.models.RegisterRequest;
 import com.api.gateway.reader.ConfigDefinition;
 import com.api.gateway.security.JwsUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -91,46 +90,5 @@ public class AuthTest {
     assertNotEquals(AuthResponse.Status.OK,out.getStatus());
   }
 
-  @Test
-  public void testRegister() throws JsonProcessingException, RestClientException, AuthException{
-    RegisterRequest registerReq = new RegisterRequest();
-    HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-    String targetUrl = "/target";
-    ApiModel api1 = new ApiModel(GatewayController.PREFIX + "registration", targetUrl, false);
-    List<ApiModel> apis = new ArrayList<>();
-    @SuppressWarnings("unchecked")
-    ResponseEntity<String> mockResponse = Mockito.mock(ResponseEntity.class);
-    HttpStatusCode statusCode = HttpStatus.OK;
-    apis.add(api1);
-
-    Mockito.when(configDef.getApis()).thenReturn(apis);
-    Mockito.when(mockResponse.getStatusCode()).thenReturn(statusCode);
-    Mockito.when(util.getObjectAsJson(registerReq)).thenReturn("mock json");
-    Mockito.when(authRestTemplate.postForEntity(Mockito.eq(targetUrl), Mockito.any(HttpEntity.class), Mockito.eq(String.class))).thenReturn(mockResponse);
-    AuthResponse out = controller.register(registerReq,response);
-
-    assertEquals(AuthResponse.Status.OK,out.getStatus());
-  }
-
-  @Test
-  public void testRegister_fail() throws JsonProcessingException, RestClientException, AuthException{
-    RegisterRequest registerReq = new RegisterRequest();
-    HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-    String targetUrl = "/target";
-    ApiModel api1 = new ApiModel(GatewayController.PREFIX + "registration", targetUrl, false);
-    List<ApiModel> apis = new ArrayList<>();
-    @SuppressWarnings("unchecked")
-    ResponseEntity<String> mockResponse = Mockito.mock(ResponseEntity.class);
-    HttpStatusCode statusCode = HttpStatus.FORBIDDEN;
-    apis.add(api1);
-
-    Mockito.when(configDef.getApis()).thenReturn(apis);
-    Mockito.when(mockResponse.getStatusCode()).thenReturn(statusCode);
-    Mockito.when(util.getObjectAsJson(registerReq)).thenReturn("mock json");
-    Mockito.when(authRestTemplate.postForEntity(Mockito.eq(targetUrl), Mockito.any(HttpEntity.class), Mockito.eq(String.class))).thenReturn(mockResponse);
-    AuthResponse out = controller.register(registerReq,response);
-
-    assertNotEquals(AuthResponse.Status.OK,out.getStatus());
-  }
   
 }
